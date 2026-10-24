@@ -33,6 +33,10 @@ BEGIN
     SELECT ViajeID, NumeroAsiento, ClienteID, FechaVenta, Canal, Precio, Estado
     FROM inserted;
 END;
+`
+
+![Prueba de Integridad](assets/evidencias/01_integridad_trigger.png)
+
 ```
 
 ## 2. Control de Concurrencia (Evitar Sobrevendidos)
@@ -51,7 +55,11 @@ IF EXISTS (SELECT 1 FROM dbo.Boletos WITH (UPDLOCK, HOLDLOCK)
 BEGIN
     THROW 50006, 'El asiento ya esta vendido.', 1;
 END
-```
+`
+
+![Concurrencia Bloqueo](assets/evidencias/02_concurrencia_bloqueo.png)
+![Concurrencia Exito](assets/evidencias/03_concurrencia_exito.png)
+``
 Con esto garantizamos que la "Sesión B" tenga que esperar a que la "Sesión A" termine su transacción. Si "A" compra el boleto, "B" recibe un error inmediatamente después de que "A" termina.
 
 ## 3. Optimización de Consultas
@@ -64,7 +72,14 @@ CREATE NONCLUSTERED INDEX IX_Boletos_Viaje_Activos
 ON dbo.Boletos (ViajeID, Estado) 
 INCLUDE (NumeroAsiento)
 WHERE Estado = 'Activo';
-```
+`
+
+**Antes de optimizar (Index Scan):**
+![Index Scan](assets/evidencias/04_optimizacion_index_scan.png)
+
+**Después de optimizar (Index Seek):**
+![Index Seek](assets/evidencias/05_optimizacion_index_seek.png)
+``
 De esta forma, la base de datos ya tiene un árbol de búsqueda ordenado por Viaje y Estado, e incluye el número de asiento en el propio índice para no tener que ir a buscarlo a la tabla física (Index Seek).
 
 ## 4. Seguridad de Acceso
@@ -80,7 +95,10 @@ GRANT EXECUTE ON dbo.sp_VenderBoleto TO rol_taquilla;
 
 -- Le quitamos todo acceso directo a la tabla
 DENY SELECT, INSERT, UPDATE, DELETE ON dbo.Boletos TO rol_taquilla;
-```
+`
+
+![Prueba Seguridad](assets/evidencias/06_seguridad_permisos.png)
+``
 Esto asegura que ni siquiera un empleado malintencionado que consiga acceso a la base de datos pueda hacer un `DELETE` directo en la tabla `Boletos`. Obligatoriamente tiene que pasar por el procedimiento almacenado que tiene nuestras validaciones.
 
 ## 5. Respaldo y Restauración (Point-In-Time Recovery)
@@ -94,4 +112,7 @@ Si alguien borra registros por error, usamos el archivo de registro de transacci
 RESTORE LOG BusRD_Recuperada 
 FROM DISK = 'C:\Backups\BusRD\BusRD_TailLog.trn'
 WITH STOPAT = '2026-10-24 16:01:21.947', RECOVERY;
-```
+`
+
+![Prueba PITR](assets/evidencias/07_restauracion_pitr.png)
+``
