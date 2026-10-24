@@ -35,7 +35,7 @@ BEGIN
 END;
 `
 
-![Prueba de Integridad](assets/evidencias/01_integridad_trigger.png)
+*(Pendiente: Imagen del error del Trigger)*
 
 ```
 
