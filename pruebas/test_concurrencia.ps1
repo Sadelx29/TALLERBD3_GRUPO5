@@ -1,7 +1,7 @@
 $server = "(localdb)\MSSQLLocalDB"
-$baseDir = "C:\Users\s.fortunato\Documents\antigravity\lucid-nobel\BusRD-Grupo1\scripts"
-$scriptA = Join-Path $baseDir "04_demo_concurrencia_sesionA.sql"
-$scriptB = Join-Path $baseDir "05_demo_concurrencia_sesionB.sql"
+$baseDir = $PSScriptRoot
+$scriptA = Join-Path $baseDir "demo_concurrencia_A.sql"
+$scriptB = Join-Path $baseDir "demo_concurrencia_B.sql"
 
 Write-Host "Iniciando prueba de concurrencia..."
 Write-Host "Ejecutando Sesion A (Tardara 10 segundos en confirmar el cobro)..."
