@@ -1,5 +1,9 @@
 # Documentación Técnica del Proyecto BusRD
 
+**Grupo 5**
+- MYNOR DIAZ - A00151859
+- Sadel Fortunato - A00168805
+
 A continuación se detalla la justificación técnica y el código clave implementado en este proyecto para cumplir con los requisitos del taller.
 
 ## 1. Integridad de Datos Avanzada
