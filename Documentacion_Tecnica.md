@@ -103,7 +103,7 @@ DENY SELECT, INSERT, UPDATE, DELETE ON dbo.Boletos TO rol_taquilla;
 *(Evidencia de creación de vistas seguras)*
 ![Creación Vistas](assets/evidencias/06_seguridad_vistas.png)
 
-*(Pendiente: Imagen del error de permisos denegados)*
+![Prueba Seguridad](assets/evidencias/06_seguridad_permisos.png)
 ``
 Esto asegura que ni siquiera un empleado malintencionado que consiga acceso a la base de datos pueda hacer un `DELETE` directo en la tabla `Boletos`. Obligatoriamente tiene que pasar por el procedimiento almacenado que tiene nuestras validaciones.
 
