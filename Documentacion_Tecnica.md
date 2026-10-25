@@ -33,11 +33,10 @@ BEGIN
     SELECT ViajeID, NumeroAsiento, ClienteID, FechaVenta, Canal, Precio, Estado
     FROM inserted;
 END;
-`
-
-*(Pendiente: Imagen del error del Trigger)*
-
 ```
+
+*(Evidencia de Trigger Integridad Única)*
+![Integridad Única](assets/evidencias/03_integridad_unica.png)
 
 ## 2. Control de Concurrencia (Evitar Sobrevendidos)
 
@@ -55,14 +54,13 @@ IF EXISTS (SELECT 1 FROM dbo.Boletos WITH (UPDLOCK, HOLDLOCK)
 BEGIN
     THROW 50006, 'El asiento ya esta vendido.', 1;
 END
-`
+```
 
 *(Evidencia de SP de Concurrencia creada)*
 ![Creación de SP](assets/evidencias/04_creacion_sp.png)
 
 ![Prueba de Concurrencia](assets/evidencias/05_concurrencia_bloqueo.png)
 
-``
 Con esto garantizamos que la "Sesión B" tenga que esperar a que la "Sesión A" termine su transacción. Si "A" compra el boleto, "B" recibe un error inmediatamente después de que "A" termina.
 
 ## 3. Optimización de Consultas
@@ -75,14 +73,14 @@ CREATE NONCLUSTERED INDEX IX_Boletos_Viaje_Activos
 ON dbo.Boletos (ViajeID, Estado) 
 INCLUDE (NumeroAsiento)
 WHERE Estado = 'Activo';
-`
+```
 
 **Antes de optimizar (Index Scan):**
 ![Index Scan](assets/evidencias/04_optimizacion_index_scan.png)
 
 **Después de optimizar (Index Seek):**
 ![Index Seek](assets/evidencias/05_optimizacion_index_seek.png)
-``
+
 De esta forma, la base de datos ya tiene un árbol de búsqueda ordenado por Viaje y Estado, e incluye el número de asiento en el propio índice para no tener que ir a buscarlo a la tabla física (Index Seek).
 
 ## 4. Seguridad de Acceso
@@ -98,13 +96,13 @@ GRANT EXECUTE ON dbo.sp_VenderBoleto TO rol_taquilla;
 
 -- Le quitamos todo acceso directo a la tabla
 DENY SELECT, INSERT, UPDATE, DELETE ON dbo.Boletos TO rol_taquilla;
-`
+```
 
 *(Evidencia de creación de vistas seguras)*
 ![Creación Vistas](assets/evidencias/06_seguridad_vistas.png)
 
 ![Prueba Seguridad](assets/evidencias/06_seguridad_permisos.png)
-``
+
 Esto asegura que ni siquiera un empleado malintencionado que consiga acceso a la base de datos pueda hacer un `DELETE` directo en la tabla `Boletos`. Obligatoriamente tiene que pasar por el procedimiento almacenado que tiene nuestras validaciones.
 
 ## 5. Respaldo y Restauración (Point-In-Time Recovery)
@@ -113,12 +111,15 @@ Como estrategia de recuperación ante desastres, configuramos la base de datos e
 
 Si alguien borra registros por error, usamos el archivo de registro de transacciones (Tail-Log) para restaurar la base de datos exactamente al milisegundo antes de que ocurriera el accidente.
 
+**Evidencia del Desastre y Backup:**
+![Backup y Desastre](assets/evidencias/07_backup_desastre.png)
+
 ```sql
 -- Restauración hasta el momento exacto (STOPAT)
 RESTORE LOG BusRD_Recuperada 
 FROM DISK = 'C:\Backups\BusRD\BusRD_TailLog.trn'
-WITH STOPAT = '2026-10-24 16:01:21.947', RECOVERY;
-`
+WITH STOPAT = '2026-10-25 12:29:21.553', RECOVERY;
+```
 
-![Prueba PITR](assets/evidencias/07_restauracion_pitr.png)
-``
+**Evidencia de Restauración Exitosa (PITR):**
+![Restauración Exitosa](assets/evidencias/08_restauracion_exitosa.png)
