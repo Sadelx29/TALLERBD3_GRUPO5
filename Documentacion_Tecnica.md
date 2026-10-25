@@ -60,7 +60,7 @@ END
 *(Evidencia de SP de Concurrencia creada)*
 ![Creación de SP](assets/evidencias/04_creacion_sp.png)
 
-![Prueba de Concurrencia](assets/evidencias/05_concurrencia_bloqueo.png)
+*(Pendiente: Imagen del bloqueo de la Sesión B)*
 
 ``
 Con esto garantizamos que la "Sesión B" tenga que esperar a que la "Sesión A" termine su transacción. Si "A" compra el boleto, "B" recibe un error inmediatamente después de que "A" termina.
