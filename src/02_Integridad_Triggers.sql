@@ -47,28 +47,46 @@ GO
    3. LLAVES FORANEAS, RESTRICCIONES CHECK Y UNICIDAD
    ===================================================================== */
 -- Llaves foraneas
-ALTER TABLE dbo.Viajes ADD CONSTRAINT FK_Viajes_Rutas FOREIGN KEY (RutaID) REFERENCES dbo.Rutas(RutaID);
-ALTER TABLE dbo.Viajes ADD CONSTRAINT FK_Viajes_Autobuses FOREIGN KEY (AutobusID) REFERENCES dbo.Autobuses(AutobusID);
-ALTER TABLE dbo.Asientos ADD CONSTRAINT FK_Asientos_Autobuses FOREIGN KEY (AutobusID) REFERENCES dbo.Autobuses(AutobusID);
-ALTER TABLE dbo.Boletos ADD CONSTRAINT FK_Boletos_Viajes FOREIGN KEY (ViajeID) REFERENCES dbo.Viajes(ViajeID);
-ALTER TABLE dbo.Boletos ADD CONSTRAINT FK_Boletos_Clientes FOREIGN KEY (ClienteID) REFERENCES dbo.Clientes(ClienteID);
-ALTER TABLE dbo.Pagos ADD CONSTRAINT FK_Pagos_Boletos FOREIGN KEY (BoletoID) REFERENCES dbo.Boletos(BoletoID);
+IF OBJECT_ID('FK_Viajes_Rutas') IS NULL
+    ALTER TABLE dbo.Viajes ADD CONSTRAINT FK_Viajes_Rutas FOREIGN KEY (RutaID) REFERENCES dbo.Rutas(RutaID);
+IF OBJECT_ID('FK_Viajes_Autobuses') IS NULL
+    ALTER TABLE dbo.Viajes ADD CONSTRAINT FK_Viajes_Autobuses FOREIGN KEY (AutobusID) REFERENCES dbo.Autobuses(AutobusID);
+IF OBJECT_ID('FK_Asientos_Autobuses') IS NULL
+    ALTER TABLE dbo.Asientos ADD CONSTRAINT FK_Asientos_Autobuses FOREIGN KEY (AutobusID) REFERENCES dbo.Autobuses(AutobusID);
+IF OBJECT_ID('FK_Boletos_Viajes') IS NULL
+    ALTER TABLE dbo.Boletos ADD CONSTRAINT FK_Boletos_Viajes FOREIGN KEY (ViajeID) REFERENCES dbo.Viajes(ViajeID);
+IF OBJECT_ID('FK_Boletos_Clientes') IS NULL
+    ALTER TABLE dbo.Boletos ADD CONSTRAINT FK_Boletos_Clientes FOREIGN KEY (ClienteID) REFERENCES dbo.Clientes(ClienteID);
+IF OBJECT_ID('FK_Pagos_Boletos') IS NULL
+    ALTER TABLE dbo.Pagos ADD CONSTRAINT FK_Pagos_Boletos FOREIGN KEY (BoletoID) REFERENCES dbo.Boletos(BoletoID);
 
 -- Restricciones CHECK
-ALTER TABLE dbo.Viajes ADD CONSTRAINT CHK_Viajes_Estado CHECK (Estado IN ('Programado', 'Completado', 'Cancelado'));
-ALTER TABLE dbo.Autobuses ADD CONSTRAINT CHK_Autobuses_Tipo CHECK (Tipo IN ('Estandar', 'Ejecutivo'));
-ALTER TABLE dbo.Autobuses ADD CONSTRAINT CHK_Autobuses_Capacidad CHECK (Capacidad > 0);
-ALTER TABLE dbo.Asientos ADD CONSTRAINT CHK_Asientos_Ubicacion CHECK (Ubicacion IN ('Ventana', 'Pasillo'));
-ALTER TABLE dbo.Boletos ADD CONSTRAINT CHK_Boletos_Canal CHECK (Canal IN ('Taquilla', 'Web'));
-ALTER TABLE dbo.Boletos ADD CONSTRAINT CHK_Boletos_Estado CHECK (Estado IN ('Activo', 'Anulado'));
-ALTER TABLE dbo.Boletos ADD CONSTRAINT CHK_Boletos_Precio CHECK (Precio >= 0);
-ALTER TABLE dbo.Pagos ADD CONSTRAINT CHK_Pagos_Metodo CHECK (Metodo IN ('Efectivo', 'Tarjeta', 'Transferencia'));
-ALTER TABLE dbo.Pagos ADD CONSTRAINT CHK_Pagos_Monto CHECK (Monto <> 0); -- Aceptamos montos negativos para anulaciones
-ALTER TABLE dbo.Rutas ADD CONSTRAINT CHK_Rutas_PrecioBase CHECK (PrecioBase >= 0);
+IF OBJECT_ID('CHK_Viajes_Estado') IS NULL
+    ALTER TABLE dbo.Viajes ADD CONSTRAINT CHK_Viajes_Estado CHECK (Estado IN ('Programado', 'Completado', 'Cancelado'));
+IF OBJECT_ID('CHK_Autobuses_Tipo') IS NULL
+    ALTER TABLE dbo.Autobuses ADD CONSTRAINT CHK_Autobuses_Tipo CHECK (Tipo IN ('Estandar', 'Ejecutivo'));
+IF OBJECT_ID('CHK_Autobuses_Capacidad') IS NULL
+    ALTER TABLE dbo.Autobuses ADD CONSTRAINT CHK_Autobuses_Capacidad CHECK (Capacidad > 0);
+IF OBJECT_ID('CHK_Asientos_Ubicacion') IS NULL
+    ALTER TABLE dbo.Asientos ADD CONSTRAINT CHK_Asientos_Ubicacion CHECK (Ubicacion IN ('Ventana', 'Pasillo'));
+IF OBJECT_ID('CHK_Boletos_Canal') IS NULL
+    ALTER TABLE dbo.Boletos ADD CONSTRAINT CHK_Boletos_Canal CHECK (Canal IN ('Taquilla', 'Web'));
+IF OBJECT_ID('CHK_Boletos_Estado') IS NULL
+    ALTER TABLE dbo.Boletos ADD CONSTRAINT CHK_Boletos_Estado CHECK (Estado IN ('Activo', 'Anulado'));
+IF OBJECT_ID('CHK_Boletos_Precio') IS NULL
+    ALTER TABLE dbo.Boletos ADD CONSTRAINT CHK_Boletos_Precio CHECK (Precio >= 0);
+IF OBJECT_ID('CHK_Pagos_Metodo') IS NULL
+    ALTER TABLE dbo.Pagos ADD CONSTRAINT CHK_Pagos_Metodo CHECK (Metodo IN ('Efectivo', 'Tarjeta', 'Transferencia'));
+IF OBJECT_ID('CHK_Pagos_Monto') IS NULL
+    ALTER TABLE dbo.Pagos ADD CONSTRAINT CHK_Pagos_Monto CHECK (Monto <> 0); -- Aceptamos montos negativos para anulaciones
+IF OBJECT_ID('CHK_Rutas_PrecioBase') IS NULL
+    ALTER TABLE dbo.Rutas ADD CONSTRAINT CHK_Rutas_PrecioBase CHECK (PrecioBase >= 0);
 
 -- Unicidad
-ALTER TABLE dbo.Clientes ADD CONSTRAINT UQ_Clientes_Cedula UNIQUE (Cedula);
-ALTER TABLE dbo.Autobuses ADD CONSTRAINT UQ_Autobuses_Placa UNIQUE (Placa);
+IF OBJECT_ID('UQ_Clientes_Cedula') IS NULL
+    ALTER TABLE dbo.Clientes ADD CONSTRAINT UQ_Clientes_Cedula UNIQUE (Cedula);
+IF OBJECT_ID('UQ_Autobuses_Placa') IS NULL
+    ALTER TABLE dbo.Autobuses ADD CONSTRAINT UQ_Autobuses_Placa UNIQUE (Placa);
 GO
 
 /* =====================================================================
