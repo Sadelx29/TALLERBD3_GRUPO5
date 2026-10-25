@@ -55,8 +55,11 @@ PRINT '=======================================================';
 WAITFOR DELAY '00:00:02';
 GO
 
+-- ATENCION: Por restriccion de Claves Foraneas (Foreign Keys),
+-- para simular el desastre borramos primero la tabla hija (Pagos) y luego la padre (Boletos)
+DELETE FROM dbo.Pagos WHERE BoletoID IN (SELECT BoletoID FROM dbo.Boletos WHERE ViajeID = 100);
 DELETE FROM dbo.Boletos WHERE ViajeID = 100;
-PRINT 'Boletos eliminados accidentalmente!';
+PRINT 'Boletos y pagos eliminados accidentalmente!';
 GO
 
 USE master;
@@ -69,24 +72,4 @@ GO
 /* =====================================================================
    3. RESTAURACION (STOPAT)
    ===================================================================== */
--- DESCOMENTAR ESTO PARA RESTAURAR EN OTRA PESTAÑA:
-/*
-RESTORE DATABASE BusRD_Recuperada 
-FROM DISK = 'C:\Backups\BusRD\BusRD_Full.bak'
-WITH MOVE 'BusRD' TO 'C:\Backups\BusRD\BusRD_Recup.mdf',
-     MOVE 'BusRD_log' TO 'C:\Backups\BusRD\BusRD_Recup_log.ldf',
-     NORECOVERY, REPLACE;
-
-RESTORE DATABASE BusRD_Recuperada 
-FROM DISK = 'C:\Backups\BusRD\BusRD_Diff.bak'
-WITH NORECOVERY;
-
-RESTORE LOG BusRD_Recuperada 
-FROM DISK = 'C:\Backups\BusRD\BusRD_Log1.trn'
-WITH NORECOVERY;
-
--- ** PEGA LA HORA AQUI **
-RESTORE LOG BusRD_Recuperada 
-FROM DISK = 'C:\Backups\BusRD\BusRD_TailLog.trn'
-WITH STOPAT = '2026-10-24 10:15:30.123', RECOVERY;
-*/
+-- El script de restauracion completo y configurado se encuentra en la carpeta 'pruebas/07_restore_script.sql'
